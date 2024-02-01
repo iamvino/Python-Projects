@@ -20,9 +20,6 @@ def update_lyrics_tag(file_path, lyrics_content):
     audiofile.tag.save(version=(2,4,0))
 
 def update_metadata(file_path, tag_search_terms, tags_to_update):
-    # Use the updated file path from the rename_filename function
-    audiofile = eyed3.load(file_path)
-
     # Check if the file exists before attempting to load
     if os.path.exists(file_path):
         print(f"Attempting to load file: {file_path}")
@@ -42,6 +39,7 @@ def update_metadata(file_path, tag_search_terms, tags_to_update):
                             if search_term in tag_value:
                                 # Delete portion from the search term to the end of the tag value
                                 updated_tag_value = tag_value.split(search_term)[0].strip()
+                                # Create a new frame and replace the existing one
                                 audiofile.tag.frame_set[tag_key][0] = eyed3.id3.frames.TextFrame(tag_key, updated_tag_value)
 
                                 print(f"Updated {tag_key} tag value: {tag_value} -> {updated_tag_value}")
@@ -214,11 +212,11 @@ def process_files(folder_path, unwanted_tags):
             rename_filename(file_path, filename_search_terms)
 
 if __name__ == "__main__":
-    folder_path = r"E:\Test"  # Replace with the path to your MP3 files or folder
+    folder_path = r"E:\Test_folder"  # Replace with the path to your MP3 files or folder
     unwanted_tags = [b'TCON', b'WOAR', b'TCOP', b'TENC', b'TEXT', b'TIT1', b'TIT3', b'TOPE', b'TPE3', b'TPE4', b'TPUB', b'TSRC', b'WXXX', b'TIPL', b'USLT', b'COMM', b'TRSN', b'TSSE', b'TBPM', b'TLEN', b'WCOM', b'WOAF', b'WOAS', b'MCDI', b'WORS', b'TCMP', b'PRIV', b'RGAD', 'GEOB', 'SYLT', 'TXXX', 'TDRL', b'TKEY', b'TLAN', b'TOWN', b'TOAL', b'TDOR', b'TOFN', b'WCOP', b'WPUB']
     filename_search_terms = ['-Mass', '-Vmus', '...']
     tag_search_terms = [' - Mass', '...', '-Vmus', ' - Vmus', '-5Star', '-Star', '-SunM', '_NewT', ' - isai']
-    tags_to_update = [b'TIT2', b'TPE1', b'TALB', b'TCOM', b'TPE2', b'TDRC']
+    tags_to_update = [b'TIT2', b'TPE1', b'TALB', b'TCOM', b'TPE2']
 
     if os.path.isfile(folder_path):  # Check if the path is a file
         delete_tags(folder_path, unwanted_tags)
