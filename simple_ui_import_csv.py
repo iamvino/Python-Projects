@@ -38,10 +38,11 @@ class MyApp:
         self.data_tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
         # Configure the horizontal scrollbar
-        data_scrollbar_x = ttk.Scrollbar(data_frame, orient=tk.HORIZONTAL, command=self.data_tree.xview)
-        data_scrollbar_x.grid(row=1, column=0, sticky="we")
+        data_scrollbar_x = ttk.Scrollbar(data_frame, orient="horizontal", command=self.data_tree.xview)
+        data_scrollbar_y = ttk.Scrollbar(data_frame, orient="vertical", command=self.data_tree.xview)
+        #data_scrollbar_x.grid(row=1, column=0, sticky="we")
 
-        self.data_tree.configure(xscrollcommand=data_scrollbar_x.set)
+        self.data_tree.configure(xscrollcommand=data_scrollbar_x.set, yscrollcommand=data_scrollbar_y.set)
 
         # Add the Frame to the "Data" tab
         self.notebook.insert(6, data_frame, text="Data")
@@ -51,7 +52,11 @@ class MyApp:
         file_path = filedialog.askopenfilename(title="Select Load file", filetypes=[("CSV file", "*.csv")])
 
         if file_path:
-            df = pd.read_csv(file_path)
+            temp = pd.read_csv(file_path, skiprows=8, nrows=1, header=None)
+            temp = temp.dropna(axis=1, how='all')
+            df = pd.read_csv(file_path, header=None, skiprows=10)
+            df = df.dropna(axis=1, how='all')
+            df.columns = temp.iloc[0]
 
             print(df.columns)
             # Add cumulative time column
